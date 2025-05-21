@@ -126,3 +126,4 @@ Requires Java 1.7+ and Maven 3.x+
 * https://github.com/Y4er/ysoserial
 * https://github.com/vulhub/java-chains
 * https://github.com/4ra1n/mysql-fake-server
+* https://github.com/yulate/jdbc-tricks
