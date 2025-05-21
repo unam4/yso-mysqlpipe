@@ -101,9 +101,6 @@ java -jar ysoserial.jar CommonsBeanutils192NOCC "calc"                          
 17. Spring2
 18. Vaadin1
 
-## 下载
-
-1. [点我下载打包好的jar包](https://github.com/Y4er/ysoserial/releases/download/latest/ysoserial-0.0.6-SNAPSHOT-all.jar)
 
 
 ## Building
@@ -123,3 +120,6 @@ Requires Java 1.7+ and Maven 3.x+
 ## See Also
 
 * [frohoff/ysoserial](https://github.com/frohoff/ysoserial)
+* https://github.com/Y4er/ysoserial
+* https://github.com/vulhub/java-chains
+* https://github.com/4ra1n/mysql-fake-server
