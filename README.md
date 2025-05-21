@@ -1,6 +1,7 @@
 # ysoserial
 
 ysoserial修改版，着重修改`ysoserial.payloads.util.Gadgets.createTemplatesImpl`使其可以通过引入自定义class的形式来执行命令、内存马、反序列化回显。
+加入生成mysql的pipe恶意流文件功能，java-chains下版本更新。
 
 ## Usage
 
@@ -104,7 +105,9 @@ java -jar ysoserial.jar CommonsBeanutils192NOCC "calc"                          
 17. Spring2
 18. Vaadin1
 
-
+## mysqlpipe
+![img.png](img.png)
+![img_1.png](img_1.png)
 
 ## Building
 
