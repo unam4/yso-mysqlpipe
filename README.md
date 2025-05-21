@@ -106,8 +106,8 @@ java -jar ysoserial.jar CommonsBeanutils192NOCC "calc"                          
 18. Vaadin1
 
 ## mysqlpipe
-![img.png](image/img.png)
-![img_1.png](image/img_1.png)
+![](image/img.png)
+![](image/img_1.png)
 
 ## Building
 
