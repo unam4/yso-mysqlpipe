@@ -2,7 +2,7 @@ package ysoserial.payloads.templates;
 
 import java.io.IOException;
 
-public class CommandTemplate {
+public class    CommandTemplate {
     static String cmd;
 
     static {
@@ -14,7 +14,7 @@ public class CommandTemplate {
                 cmds[0] = "cmd";
                 cmds[1] = "/c";
             } else {
-                cmds[0] = "bash";
+                cmds[0] = "sh";
                 cmds[1] = "-c";
             }
             cmds[2] = cmd;

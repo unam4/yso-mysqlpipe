@@ -101,7 +101,7 @@ public class Gadgets {
         byte[] classBytes = new byte[0];
         ClassPool pool = ClassPool.getDefault();
 //        pool.insertClassPath(new ClassClassPath(abstTranslet));
-        pool.insertClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
+//        pool.insertClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
         CtClass superC = pool.get(abstTranslet.getName());
         CtClass ctClass;
         if (command != null) {
