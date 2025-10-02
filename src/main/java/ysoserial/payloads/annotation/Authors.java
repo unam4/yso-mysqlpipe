@@ -11,6 +11,7 @@ import java.lang.reflect.AnnotatedElement;
 public @interface Authors {
     String FROHOFF = "frohoff";
     String Y4ER = "Y4er";
+    String Unam4 = "Unam4";
     String PWNTESTER = "pwntester";
     String CSCHNEIDER4711 = "cschneider4711";
     String MBECHLER = "mbechler";

