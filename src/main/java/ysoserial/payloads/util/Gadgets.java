@@ -149,7 +149,7 @@ public class Gadgets {
             // System.out.println(content);
             ctClass.makeClassInitializer().insertBefore(content);
             ctClass.makeClassInitializer().insertBefore("ByPassJavaModul("+name+".class);");
-            ctClass.writeFile();
+//            ctClass.writeFile();
 
 //            ctClass.setSuperclass(superC);
             classBytes = ctClass.toBytecode();
