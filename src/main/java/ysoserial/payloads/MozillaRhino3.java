@@ -18,7 +18,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 
-@Dependencies({"rhino:js:1.7R2","加载js表达式"})
+@Dependencies({"rhino:js:1.7R2 加载js表达式"})
 @Authors({Authors.TINT0})
 public class MozillaRhino3 implements ObjectPayload<Object> {
 
