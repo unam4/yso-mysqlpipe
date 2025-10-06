@@ -3,11 +3,14 @@ package ysoserial.payloads;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
+import ysoserial.payloads.annotation.Authors;
+import ysoserial.payloads.annotation.Dependencies;
 
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 
+@Authors({Authors.Ar3h})
 public class FindClass implements ObjectPayload<Object> {
     private final List hashMaps = new ArrayList<>();
     public String useCanary = "false";

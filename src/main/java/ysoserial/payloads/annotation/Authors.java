@@ -9,6 +9,7 @@ import java.lang.reflect.AnnotatedElement;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Authors {
+    String Ar3h = "Ar3h";
     String FROHOFF = "frohoff";
     String Y4ER = "Y4er";
     String Unam4 = "Unam4";
