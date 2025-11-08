@@ -56,6 +56,6 @@ jobs:
 
       # 6. 发布到 GitHub Packages（关键：不再指定 -s 文件）
       - name: 发布到 GitHub Packages
-        run: mvn -B deploy -DskipTests
+        run: mvn -B deploy -DskipTests -Dversion=${{ github.event.inputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 可选，setup-java 已自动注入
