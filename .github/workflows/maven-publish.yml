@@ -56,6 +56,6 @@ jobs:
 
       # 6. 发布到 GitHub Packages（跳过测试，节省时间）
       - name: Publish to GitHub Packages
-        run:  mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        run:  mvn -B deploy -DskipTests -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }} # 自动注入认证令牌
