@@ -16,8 +16,8 @@ import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 import java.util.HashMap;
 
-@PayloadTest(harness = "ysoserial.test.payloads.FileUploadTest", flaky = "possible race condition")
-@Dependencies({"org.apache.xbean-naming", "BeanFactory（Tomcat<10.1.0-M14、10.0.21、9.0.63、8.5.79"})
+@PayloadTest(harness = "ysoserial.test.payloads.XbeanWithBeanFactory", flaky = "possible race condition")
+@Dependencies({"org.apache.xbean-naming:org.apache.xbean-naming:all", "BeanFactory:BeanFactory(Tomcat<10.1.0-M14、10.0.21、9.0.63、8.5.79"})
 @Authors({Authors.Unam4})
 public class XbeanWithBeanFactory implements ObjectPayload<Object> {
 
