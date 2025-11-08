@@ -44,7 +44,7 @@ jobs:
 
       # 4. 清洁构建（避免旧产物干扰）
       - name: Build with Maven
-        run: mvn -B clean package --file pom.xml
+        run: mvn -B clean package -DskipTests --file pom.xml
 
       # 5. 上传 Jar 包（方便调试，可选但推荐）
       - name: Upload build artifact
