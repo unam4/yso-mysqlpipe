@@ -21,11 +21,6 @@
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/unam4/yso-mysqlpipe</url>
         </repository>
-        <snapshotRepository>
-            <id>github</id>
-            <name>GitHub Packages Snapshots</name>
-            <url>https://maven.pkg.github.com/unam4/yso-mysqlpipe</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <build>
