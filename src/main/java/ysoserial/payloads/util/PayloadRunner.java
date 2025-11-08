@@ -42,12 +42,15 @@ public class PayloadRunner {
     }
 
     private static String getDefaultTestCmd() {
-        return getFirstExistingFile(
-            "C:\\Windows\\System32\\calc.exe",
-            "/Applications/Calculator.app/Contents/MacOS/Calculator",
-            "/usr/bin/gnome-calculator",
-            "/usr/bin/kcalc"
-        );
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("win")) {
+            return "calc.exe";
+        } else if (osName.contains("mac")) {
+            return "open -a calculator";
+        } else {
+            // Assume it's a Linux system
+            return "/usr/bin/gnome-calculator";
+        }
     }
 
     private static String getFirstExistingFile(String... files) {
