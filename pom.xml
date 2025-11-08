@@ -22,14 +22,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <!-- maximize compatibility -->
                     <source>8</source>
                     <target>8</target>
-                    <executable>/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home/bin/javac</executable>
-
-                    <!-- ignore noisy internal api warnings -->
-                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
+                    <encoding>UTF-8</encoding>
+                    <compilerVersion>8</compilerVersion>
                     <fork>true</fork>
+                    <compilerArguments>
+                        <bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar</bootclasspath> <!-- JDK8 兼容用，JDK11可去掉 -->
+                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>
