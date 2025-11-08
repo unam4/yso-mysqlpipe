@@ -45,7 +45,7 @@ jobs:
 
       # 4. 清理并构建
       - name: 构建项目
-        run: mvn -B clean package -DskipTests
+        run: mvn -B clean package -DskipTests -Dversion=${{ github.event.inputs.version }}
 
       # 5. 上传 JAR 包（方便调试）
       - name: 上传构建产物
@@ -56,6 +56,6 @@ jobs:
 
       # 6. 发布到 GitHub Packages（关键：不再指定 -s 文件）
       - name: 发布到 GitHub Packages
-        run: mvn -B clean package -DskipTests -Dversion=${{ github.event.inputs.version }}
+        run: mvn -B deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 可选，setup-java 已自动注入
