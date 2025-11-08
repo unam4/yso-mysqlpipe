@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: write
       packages: write # 发布 GitHub Packages 必需权限
+      id-token: write
 
     steps:
       # 1. 检出代码
@@ -57,4 +58,4 @@ jobs:
       - name: Publish to GitHub Packages
         run: mvn -B deploy -DskipTests -s $GITHUB_WORKSPACE/settings.xml
         env:
-          GITHUB_TOKEN: ${{ github.token }} # 自动注入认证令牌
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 自动注入认证令牌
