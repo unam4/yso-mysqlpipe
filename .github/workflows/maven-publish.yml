@@ -12,7 +12,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write # 发布 GitHub Packages 必需权限
       id-token: write
 
@@ -41,7 +41,7 @@ jobs:
           server-id: github # 必须与 pom.xml 的 distributionManagement/id 一致
           settings-path: ${{ github.workspace }}
           server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }} # 自动认证
+          server-password: ${{ github.token }} # 自动认证
 
       # 4. 清洁构建（避免旧产物干扰）
       - name: Build with Maven
@@ -56,6 +56,6 @@ jobs:
 
       # 6. 发布到 GitHub Packages（跳过测试，节省时间）
       - name: Publish to GitHub Packages
-        run: mvn -B deploy -DskipTests -s $GITHUB_WORKSPACE/settings.xml
+        run:  mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 自动注入认证令牌
+          GITHUB_TOKEN: ${{ github.token }} # 自动注入认证令牌
