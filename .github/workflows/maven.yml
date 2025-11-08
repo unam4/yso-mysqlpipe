@@ -1,0 +1,37 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '发布的版本号（如 0.0.6）'
+        required: false
+        default: '0.0.6'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      - name: 配置 JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          server-id: github           # ✅ 必须与 pom.xml 中的 <id> 一致
+          server-username: ${{ github.actor }}  # 自动使用当前操作者用户名
+          server-password: ${{ secrets.GITHUB_TOKEN }} # ✅ 使用 GITHUB_TOKEN 认证
+          settings-path: ${{ github.workspace }} # 指定 settings.xml 生成位置
+      - name: 构建项目
+        run: mvn -B clean package -DskipTests -Dversion=${{ github.event.inputs.version }}
+
