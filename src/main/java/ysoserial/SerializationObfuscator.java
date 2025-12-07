@@ -250,8 +250,8 @@ public class SerializationObfuscator {
     public boolean changeTC_STRING() {
         int length = ((originalBytes[index + 1] & 0xFF) << 8) | (originalBytes[index + 2] & 0xFF);
         // 溢出
-        if (length > 0xff || length < 0x00)
-            return false;
+//        if (length > 0xff || length < 0x00)
+//            return false;
 
         // 原始内容
         byte[] originalValue = new byte[length];
