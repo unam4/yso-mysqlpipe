@@ -15,8 +15,8 @@ public class jtaTransactionManager implements ObjectPayload<Object> {
 
 
     public Object getObject(final String command) throws Exception {
-        if (command != null && !command.startsWith("ldap") && !command.startsWith("rmi")) {
-            System.err.println("!!! 输入错误, 请输入ldap://或rmi://格式的url");
+        if (command != null && !command.startsWith("ldap") && !command.startsWith("rmi")&& !command.startsWith("dns")) {
+            System.err.println("!!! 输入错误, 请输入ldap://或rmi://格式或dns://格式的url");
             System.exit(1);
         }
         JtaTransactionManager o = new JtaTransactionManager();
