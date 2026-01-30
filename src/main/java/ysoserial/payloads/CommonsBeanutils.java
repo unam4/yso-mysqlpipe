@@ -16,10 +16,10 @@ import java.util.PriorityQueue;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-beanutils:commons-beanutils:1.5-1.10,命令后面:_version,eg:calc_1.8,默认1.9"})
 @Authors({Authors.Unam4})
-public class CommonsBeanutils1 implements ObjectPayload<Object> {
+public class CommonsBeanutils implements ObjectPayload<Object> {
 
     public static void main(final String[] args) throws Exception {
-        PayloadRunner.run(CommonsBeanutils1.class, new String[]{"open ._1.6"});
+        PayloadRunner.run(CommonsBeanutils.class, new String[]{"open ._1.6"});
     }
 
     public Object getObject(final String command) throws Exception {

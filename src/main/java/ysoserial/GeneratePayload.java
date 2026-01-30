@@ -13,6 +13,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.Level;
 
@@ -62,8 +64,9 @@ public class GeneratePayload {
 
                 // Check if utf8long option is enabled
                 if (utf8LongEnabled) {
-                    resultBytes = SerializationObfuscator.builder(resultBytes)
-                        .withType(1) // 使用纯3字节编码
+                    resultBytes =   SerializationObfuscator.builder(resultBytes)
+                        .withType(1)
+                        .withTcResetSize(ThreadLocalRandom.current().nextInt(10, 50))// 使用纯3字节编码
                         .build();
                 }
 
