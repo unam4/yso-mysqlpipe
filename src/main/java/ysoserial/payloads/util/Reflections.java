@@ -63,6 +63,10 @@ public class Reflections {
         return createWithConstructor(classToInstantiate, Object.class, new Class[0], new Object[0]);
     }
 
+    public static Object createWithoutConstructor(String classname) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return createWithoutConstructor(Class.forName(classname));
+    }
+
     @SuppressWarnings({"unchecked"})
     public static <T> T createWithConstructor(Class<T> classToInstantiate, Class<? super T> constructorClass, Class<?>[] consArgTypes, Object[] consArgs)
         throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
